@@ -3,18 +3,18 @@
 """ Handles db connection and executes sql. """
 
 import datetime, json, os, pprint, random, sys
-import requests
+from ezb_dbprx.config import settings
 
 
 class DB_Handler(object):
 
   def __init__(self, file_logger ):
     """ Sets up basics. """
-    self.db_host = unicode( os.environ.get(u'ezb_ctl__DB_HOST') )
-    self.db_port = int( unicode(os.environ.get(u'ezb_ctl__DB_PORT')) )
-    self.db_username = unicode( os.environ.get( u'ezb_ctl__DB_USERNAME') )
-    self.db_password = unicode( os.environ.get(u'ezb_ctl__DB_PASSWORD') )
-    self.db_name = unicode( os.environ.get( u'ezb_ctl__DB_NAME') )
+    self.db_host = settings.DB_HOST
+    self.db_port = settings.DB_PORT
+    self.db_username = settings.DB_USERNAME
+    self.db_password = settings.DB_PASSWORD
+    self.db_name = settings.DB_NAME
     self.connection_object = None  # populated during queries
     self.cursor_object = None  # populated during queries
 
@@ -52,7 +52,8 @@ class DB_Handler(object):
       self.file_logger.error( message )
 
   def _unicodify_resultset( self, dict_list ):
-    """ Returns dict with keys and values as unicode-strings. """
+    """ Returns dict with keys and values as unicode-strings.
+        Called by execute_sql() """
     try:
       result_list = []
       for row_dict in dict_list:
