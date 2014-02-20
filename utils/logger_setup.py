@@ -3,6 +3,7 @@
 """ Handles log setup. """
 
 import logging, os
+import logging.handlers
 from ezb_dbprx.config import settings
 
 
