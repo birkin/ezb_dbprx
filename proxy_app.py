@@ -1,6 +1,6 @@
-import os
+import json, os
 import flask
-from ezb_dbprx.utils import logger_setup
+from ezb_dbprx.utils import logger_setup, db_handler
 
 
 app = flask.Flask(__name__)
@@ -20,7 +20,11 @@ def hi_b():
 
 @app.route( '/search_new_request', methods=['GET'] )
 def search():
-    return flask.jsonify( {'will': 'do'} )
+    log.info( u'starting search' )
+    db = db_handler.DB_Handler( log )
+    dict_list = db.search_new_request()
+    return flask.jsonify( {u'output': dict_list} )
+    # return flask.jsonify( {'will': 'do'} )
 
 
 if __name__ == '__main__':

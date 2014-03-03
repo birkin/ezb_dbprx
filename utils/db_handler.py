@@ -80,6 +80,17 @@ class DB_Handler(object):
       message = u'in dev_code.db_handler._close_db_connection(); error: %s' % unicode( repr(e).decode(u'utf8', u'replace') )
       self.file_logger.error( message )
 
+  # def search_new_request( self ):
+  #   """ Returns json string of found request dict on find, 'result': 'not_found' on no-find.
+  #       Called by: proxy_app.search() """
+  #   return u'test_successful'
+
+  def search_new_request( self ):
+    """ Returns json string of found request dict on find, 'result': 'not_found' on no-find.
+        Called by: proxy_app.search() """
+    dict_list = self.execute_sql( settings.SEARCH_SQL )
+    return dict_list
+
   def jsonify_db_data( self, data_dict ):
     """ Returns json string for given tuple of row-dict entries.
         Allows result to be logged easily.
