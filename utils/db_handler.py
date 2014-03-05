@@ -19,6 +19,31 @@ class DB_Handler(object):
         self.connection_object = None  # populated during queries
         self.cursor_object = None  # populated during queries
         self.file_logger = file_logger
+        self.key_mapper = {  # converts database fields into more generic keys
+            u'alt_edition': u'preference_alternate_edition',
+            u'barcode': u'patron_barcode',
+            u'bibno': u'item_bib_number',
+            u'created': u'db_create_date',
+            u'email': u'patron_email',
+            u'eppn': u'patron_shib_eppn',
+            u'firstname': u'patron_name_first',
+            u'group': u'patron_shib_group',
+            u'id': u'db_id',
+            u'isbn': u'item_isbn',
+            u'lastname': u'patron_name_last',
+            u'loc': u'libary_location',
+            u'name': u'patron_name_firstlast',
+            u'patronId': u'patron_id',
+            u'pref': u'preference_quick',
+            u'request_status': u'db_request_status',
+            u'sfxurl': u'item_openurl',
+            u'staffnote': u'staff_note',
+            u'title': u'item_title',
+            u'volumes': u'item_volumes',
+            u'wc_accession': u'item_worldcat_id'
+            }
+
+    ## execute_sql() ##
 
     def execute_sql(self, sql):
         """ Executes sql; returns tuple of row-dicts.
@@ -42,7 +67,6 @@ class DB_Handler(object):
         """ Sets up connection; populates instance attributes.
             Called by execute_sql() """
         self.file_logger.debug( u'in db_handler._setup_db_connection(); starting' )
-        self.file_logger.debug( u'in db_handler._setup_db_connection(); db_host, %s' % self.db_host )
         try:
             self.connection_object = MySQLdb.connect(
                 host=self.db_host, port=self.db_port, user=self.db_username, passwd=self.db_password, db=self.db_name )
@@ -81,18 +105,31 @@ class DB_Handler(object):
             message = u'in dev_code.db_handler._close_db_connection(); error: %s' % unicode( repr(e).decode(u'utf8', u'replace') )
             self.file_logger.error( message )
 
-  # def search_new_request( self ):
-  #   """ Returns json string of found request dict on find, 'result': 'not_found' on no-find.
-  #       Called by: proxy_app.search() """
-  #   return u'test_successful'
+    ## search_new_request() ##
 
     def search_new_request( self ):
         """ Returns json string of found request dict on find, 'result': 'not_found' on no-find.
             Called by: proxy_app.search() """
         sql = settings.SEARCH_SQL
         self.file_logger.debug( u'in db_handler.search_new_request; sql, %s' % sql )
-        dict_list = self.execute_sql( sql )
-        return dict_list
+        raw_dict_list = self.execute_sql( sql )
+        self.file_logger.debug( u'in db_handler.search_new_request; raw_dict_list, %s' % raw_dict_list )
+        massaged_dict = self._massage_raw_data( raw_dict_list )
+        return massaged_dict
+
+    def _massage_raw_data( self, raw_dict_list ):
+        """ Takes raw json list of a single dict representing db result;
+                makes keys more generic;
+                returns the generic dict (not a list).
+            Called by search_new_request() """
+        raw_dict = raw_dict_list[u'output'][0]
+        self.file_logger.debug( u'in db_handler.search_new_request; raw_dict, %s' % raw_dict )
+        massaged_dict = {}
+        for (key, value) in raw_dict.items():
+            pass  # TODO, use self.key_mapper here
+        return massaged_dict
+
+    ## other ##
 
     def jsonify_db_data( self, data_dict ):
         """ Returns json string for given tuple of row-dict entries.
@@ -120,23 +157,3 @@ class DB_Handler(object):
 
   # end class DB_Handler()
 
-
-# def get_db_handler( file_logger ):
-#   db_handler = DB_Handler( file_logger=file_logger )
-#   return db_handler
-
-
-## helper functions
-
-# def make_datetime_string():
-#   """ Returns time-string like 'Wed Oct 23 14:49:38 EDT 2013'. """
-#   import time
-#   time_object = time.localtime(); assert type(time_object) == time.struct_time
-#   time_string = time.strftime( u'%a %b %d %H:%M:%S %Z %Y', time_object )
-#   return time_string
-
-# def make_error_string():
-#   """ Returns detailed error information for logging/debugging. """
-#   error_message = u'error-type - %s; error-message - %s; line-number - %s' % (
-#     sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2].tb_lineno, )
-#   return error_message
