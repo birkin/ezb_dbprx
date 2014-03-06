@@ -14,3 +14,9 @@ SEARCH_SQL = unicode( os.environ.get( u'ezb_dbprx_SEARCH_SQL') )
 # file-logger
 LOG_DIR = unicode( os.environ.get(u'ezb_dbprx__LOG_DIR') )
 LOG_LEVEL = unicode( os.environ.get(u'ezb_dbprx__LOG_LEVEL') )
+
+# basic auth
+BASIC_AUTH_USERNAME = unicode( os.environ.get(u'ezb_dbprx__BASIC_AUTH_USERNAME') )
+BASIC_AUTH_PASSWORD = unicode( os.environ.get(u'ezb_dbprx__BASIC_AUTH_PASSWORD') )
+
+# end
