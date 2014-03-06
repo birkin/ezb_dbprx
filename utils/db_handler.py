@@ -20,9 +20,9 @@ class DB_Handler(object):
         self.cursor_object = None  # populated during queries
         self.file_logger = file_logger
         self.key_mapper = {  # converts database fields into more generic keys
-            u'alt_edition': u'preference_alternate_edition',
+            u'alt_edition': u'preference_alternate_edition',  # needed?
             u'barcode': u'patron_barcode',
-            u'bibno': u'item_bib_number',
+            u'bibno': u'item_bib_number',  # needed?
             u'created': u'db_create_date',
             u'email': u'patron_email',
             u'eppn': u'patron_shib_eppn',
@@ -31,10 +31,10 @@ class DB_Handler(object):
             u'id': u'db_id',
             u'isbn': u'item_isbn',
             u'lastname': u'patron_name_last',
-            u'loc': u'libary_location',
+            u'loc': u'libary_location',  # needed?
             u'name': u'patron_name_firstlast',
-            u'patronId': u'patron_id',
-            u'pref': u'preference_quick',
+            u'patronId': u'patron_id',  # needed?
+            u'pref': u'preference_quick',  # needed?
             u'request_status': u'db_request_status',
             u'sfxurl': u'item_openurl',
             u'staffnote': u'staff_note',
@@ -78,21 +78,19 @@ class DB_Handler(object):
             self.file_logger.error( message )
 
     def _unicodify_resultset( self, dict_list ):
-        """ Returns dict with keys and values as unicode-strings.
+        """ Takes tuple of row-dicts;
+                Makes true list and ensures all keys and values are unicode;
+                Returns list of type-corrected dicts.
             Called by execute_sql() """
-        try:
-            result_list = []
-            for row_dict in dict_list:
-                new_row_dict = {}
-                for key,value in row_dict.items():
-                    if type(value) == datetime.datetime:
-                        value = unicode(value)
-                    new_row_dict[ unicode(key) ] = unicode(value)
-                result_list.append( new_row_dict )
-            return result_list
-        except Exception as e:
-            message = u'in dev_code.db_handler._unicodify_resultset(); error: %s' % unicode( repr(e) )
-            self.file_logger.error( message )
+        result_list = []
+        for row_dict in dict_list:
+            new_row_dict = {}
+            for key,value in row_dict.items():
+                if type(value) == datetime.datetime:
+                    value = unicode(value)
+                new_row_dict[ unicode(key) ] = unicode(value)
+            result_list.append( new_row_dict )
+        return result_list
 
     def _close_db_connection( self ):
         """ Closes db connection.
@@ -121,12 +119,13 @@ class DB_Handler(object):
         """ Takes raw json list of a single dict representing db result;
                 makes keys more generic;
                 returns the generic dict (not a list).
-            Called by search_new_request() """
-        raw_dict = raw_dict_list[u'output'][0]
-        self.file_logger.debug( u'in db_handler.search_new_request; raw_dict, %s' % raw_dict )
+            Called by search_new_request() .
+            Possible TODO: add None to self.key_mapper if item isn't needed; test for that here and don't return it. """
+        raw_dict = raw_dict_list[0]
         massaged_dict = {}
         for (key, value) in raw_dict.items():
-            pass  # TODO, use self.key_mapper here
+            new_key = self.key_mapper[key]
+            massaged_dict[new_key] = value
         return massaged_dict
 
     ## other ##
