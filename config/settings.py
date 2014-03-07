@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import os
+import json, os
 
 
 # db access
@@ -18,5 +18,8 @@ LOG_LEVEL = unicode( os.environ.get(u'ezb_dbprx__LOG_LEVEL') )
 # basic auth
 BASIC_AUTH_USERNAME = unicode( os.environ.get(u'ezb_dbprx__BASIC_AUTH_USERNAME') )
 BASIC_AUTH_PASSWORD = unicode( os.environ.get(u'ezb_dbprx__BASIC_AUTH_PASSWORD') )
+
+# legit_ips
+LEGIT_IPS = json.loads( unicode(os.environ.get(u'ezb_dbprx__LEGIT_IPS')) )
 
 # end
