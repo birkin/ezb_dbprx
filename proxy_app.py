@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import json, os
+import datetime, json, os
 import flask
 from ezb_dbprx.config import settings
 from ezb_dbprx.utils import logger_setup, db_handler
@@ -71,8 +71,13 @@ def search():
         return flask.abort( 403 )
     log.debug( u'- in proxy_app; search(); ip legit' )
     db = db_handler.DB_Handler( log )
-    dict_list = db.search_new_request()
-    return flask.jsonify( {u'output': dict_list} )
+    result_dict = db.search_new_request()
+    return_dict = {
+        u'request_type': u'search_new_request',
+        u'datetime': unicode( datetime.datetime.now() ),
+        u'result': result_dict
+        }
+    return flask.jsonify( return_dict )
 
 
 
