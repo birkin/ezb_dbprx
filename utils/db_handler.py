@@ -47,7 +47,8 @@ class DB_Handler(object):
 
     def execute_sql(self, sql):
         """ Executes sql; returns tuple of row-dicts.
-            Example return data: ( {row1field1key: row1field1value, row1field2key: row1field2value}, {row2field1key: row2field1value, row2field2key: row2field2value} ) """
+            Example return data: ( {row1field1key: row1field1value, row1field2key: row1field2value}, {row2field1key: row2field1value, row2field2key: row2field2value} )
+            Called by self.search_new_request(), self.update_request_status(), and self.update_history_note() """
         try:
             self._setup_db_connection()
             if not self.cursor_object:
@@ -143,7 +144,8 @@ class DB_Handler(object):
 
     def update_request_status( self, row_id, status ):
         """ Updates request table status field.
-            Called by ezb_controller.py """
+            Called by ezb_controller.py
+            TODO: Stub; make it work. """
         sql = u"UPDATE `aaa` SET bbb = '%s' WHERE id = %s" % ( status, row_id )
         result = self.execute_sql( sql )
         self.file_logger.debug( u'in dev_code.db_handler.update_request_status(); status updated to %s' % status )
@@ -151,7 +153,8 @@ class DB_Handler(object):
 
     def update_history_note( self, request_id, note ):
         """ Updates history table note field.
-            Called by ezb_controller.py """
+            Called by ezb_controller.py
+            TODO: Stub; make it work. """
         sql = u"INSERT INTO `aaa` ( field_a, field_b ) VALUES ( '%s', '%s' )" % ( request_id, note )
         result = self.execute_sql( sql )
         self.file_logger.debug( u'- in dev_ezb_controller.py; uc.DB_Handler.update_history_note(); note updated' )

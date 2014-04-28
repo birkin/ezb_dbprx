@@ -47,6 +47,13 @@ def try_forbidden():
     return flask.abort( 403 )
 
 
+@app.route( '/post_test', methods=['POST'] )
+def handle_post():
+    """ Tests perceiving params response return. """
+    value_a = flask.request.form['key_a'].strip()
+    return flask.jsonify( {u'key_a': value_a} )
+
+
 ## real work ##
 
 
@@ -63,19 +70,40 @@ def show_ip():
 @basic_auth.required
 def search():
     """ Searches for new requests. """
-    log.debug( u'- in proxy_app; starting search()' )
     client_ip = flask.request.remote_addr
-    log.debug( u'- in proxy_app.search(); client_ip, `%s`' % client_ip )
     if not client_ip in settings.LEGIT_IPS.keys():
-        log.debug( u'- in proxy_app.search(); returning forbidden' )
+        log.debug( u'- in proxy_app.search_new_request(); client_ip `%s` not in LEGIT_IPS; returning forbidden' % client_ip )
         return flask.abort( 403 )
-    log.debug( u'- in proxy_app; search(); ip legit' )
     db = db_handler.DB_Handler( log )
     result_dict = db.search_new_request()
     return_dict = {
         u'request_type': u'search_new_request',
         u'datetime': unicode( datetime.datetime.now() ),
-        u'result': result_dict
+        u'result': result_dict }
+    return flask.jsonify( return_dict )
+
+
+@app.route( u'/update_request_status', methods=['POST'] )
+@basic_auth.required
+def update_request_status():
+    """ Updates db request status. """
+    log.debug( u'- in proxy_app.update_request_status(); starting' )
+    client_ip = flask.request.remote_addr
+    log.debug( u'- in proxy_app.update_request_status(); client_ip, `%s`' % client_ip )
+    if not client_ip in settings.LEGIT_IPS.keys():
+        log.debug( u'- in proxy_app.update_request_status(); returning forbidden' )
+        return flask.abort( 403 )
+    log.debug( u'- in proxy_app; update_request_status(); ip legit' )
+    db_id = flask.request.form[u'db_id']
+    status = flask.request.form[u'status']
+    db = db_handler.DB_Handler( log )
+    result_dict = db.update_request_status()
+    assert result_dict.keys() = [u'status']
+    return_dict = {
+        u'request_type': u'update_request_status',
+        u'db_id': db_id,
+        u'datetime': unicode( datetime.datetime.now() ),
+        u'result': result_dict[u'status']
         }
     return flask.jsonify( return_dict )
 
