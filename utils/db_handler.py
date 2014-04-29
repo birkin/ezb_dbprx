@@ -134,13 +134,13 @@ class DB_Handler(object):
 
     ## other ##
 
-    def jsonify_db_data( self, data_dict ):
-        """ Returns json string for given tuple of row-dict entries.
-            Allows result to be logged easily.
-            Called by ezb_controller.py """
-        data_dict[u'created'] = unicode( data_dict[u'created'] )
-        jstring = json.dumps( data_dict, sort_keys=True, indent=2 )
-        return jstring
+    # def jsonify_db_data( self, data_dict ):
+    #     """ Returns json string for given tuple of row-dict entries.
+    #         Allows result to be logged easily.
+    #         Called by ezb_controller.py """
+    #     data_dict[u'created'] = unicode( data_dict[u'created'] )
+    #     jstring = json.dumps( data_dict, sort_keys=True, indent=2 )
+    #     return jstring
 
     def update_request_status( self, row_id, status ):
         """ Updates request table status field.
