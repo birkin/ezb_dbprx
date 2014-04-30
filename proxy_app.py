@@ -94,11 +94,14 @@ def update_request_status():
         log.debug( u'- in proxy_app.update_request_status(); returning forbidden' )
         return flask.abort( 403 )
     log.debug( u'- in proxy_app; update_request_status(); ip legit' )
-    db_id = flask.request.form[u'db_id']
+    log.debug( u'- in proxy_app; update_request_status(); flask.request.form.keys(), %s' % sorted(flask.request.form.keys()) )
+    db_id = flask.request.form[u'db_id']  # flask will return a '400 - Bad Request' if getting a value fails
     status = flask.request.form[u'status']
+    TODO: assert status in settings.LEGIT_STATUSES
+    log.debug( u'- in proxy_app; update_request_status(); params grabbed' )
     db = db_handler.DB_Handler( log )
-    result_dict = db.update_request_status()
-    assert result_dict.keys() = [u'status']
+    result_dict = db.update_request_status( db_id, status )
+    assert result_dict.keys() == [u'status']
     return_dict = {
         u'request_type': u'update_request_status',
         u'db_id': db_id,

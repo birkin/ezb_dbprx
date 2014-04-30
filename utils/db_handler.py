@@ -58,7 +58,7 @@ class DB_Handler(object):
             dict_list = self._unicodify_resultset( dict_list )
             return dict_list
         except Exception as e:
-            message = u'in dev_code.db_handler.execute_sql(); error: %s' % unicode( repr(e).decode(u'utf8', u'replace') )
+            message = u'in db_handler.execute_sql(); error: %s' % unicode( repr(e).decode(u'utf8', u'replace') )
             self.file_logger.error( message )
             return None
         finally:
@@ -101,7 +101,7 @@ class DB_Handler(object):
             self.connection_object.close()
             return
         except Exception as e:
-            message = u'in dev_code.db_handler._close_db_connection(); error: %s' % unicode( repr(e).decode(u'utf8', u'replace') )
+            message = u'in db_handler._close_db_connection(); error: %s' % unicode( repr(e).decode(u'utf8', u'replace') )
             self.file_logger.error( message )
 
     ## search_new_request() ##
@@ -142,13 +142,15 @@ class DB_Handler(object):
     #     jstring = json.dumps( data_dict, sort_keys=True, indent=2 )
     #     return jstring
 
-    def update_request_status( self, row_id, status ):
+    def update_request_status( self, db_id, status ):
         """ Updates request table status field.
-            Called by ezb_controller.py
+            Called by proxy_app.update_request_status()
             TODO: Stub; make it work. """
-        sql = u"UPDATE `aaa` SET bbb = '%s' WHERE id = %s" % ( status, row_id )
+        sql = settings.UPDATE_REQUEST_STATUS_SQL_PATTERN % ( status, db_id )
+        # sql = settings.UPDATE_REQUEST_STATUS_SQL_PATTERN % status
+        self.file_logger.debug( u'in db_handler.update_request_status(); sql, %s' % sql )
         result = self.execute_sql( sql )
-        self.file_logger.debug( u'in dev_code.db_handler.update_request_status(); status updated to %s' % status )
+        self.file_logger.debug( u'in db_handler.update_request_status(); result, %s' % result )
         return
 
     def update_history_note( self, request_id, note ):

@@ -9,7 +9,10 @@ DB_PORT = int( unicode(os.environ.get(u'ezb_dbprx__DB_PORT')) )
 DB_USERNAME = unicode( os.environ.get( u'ezb_dbprx__DB_USERNAME') )
 DB_PASSWORD = unicode( os.environ.get(u'ezb_dbprx__DB_PASSWORD') )
 DB_NAME = unicode( os.environ.get( u'ezb_dbprx__DB_NAME') )
-SEARCH_SQL = unicode( os.environ.get( u'ezb_dbprx_SEARCH_SQL') )
+
+# db sql
+SEARCH_SQL = unicode( os.environ.get( u'ezb_dbprx_SEARCH_SQL') )  # for db_handler.DB_Handler.search_new_request()
+UPDATE_REQUEST_STATUS_SQL_PATTERN = unicode( os.environ.get( u'ezb_dbprx_UPDATE_REQUEST_STATUS_SQL_PATTERN') )  # for db_handler.DB_Handler.update_request_status()
 
 # file-logger
 LOG_DIR = unicode( os.environ.get(u'ezb_dbprx__LOG_DIR') )
