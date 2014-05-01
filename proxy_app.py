@@ -97,16 +97,22 @@ def update_request_status():
     log.debug( u'- in proxy_app; update_request_status(); flask.request.form.keys(), %s' % sorted(flask.request.form.keys()) )
     db_id = flask.request.form[u'db_id']  # flask will return a '400 - Bad Request' if getting a value fails
     status = flask.request.form[u'status']
-    TODO: assert status in settings.LEGIT_STATUSES
-    log.debug( u'- in proxy_app; update_request_status(); params grabbed' )
+    try:
+        assert status in [ u'in_process', u'processed' ]  # never changing it to its original 'not_yet_processed'
+        assert db_id.isdigit()
+    except Exception as e:
+        log.error( u'- in proxy_app; update_request_status(); params grabbed; keys good but value(s) bad; db_id, `%s`; status, `%s`' % (db_id, status) )
+        return flask.abort( 400, u'Bad data.' )
+    log.debug( u'- in proxy_app; update_request_status(); params grabbed & data is valid' )
     db = db_handler.DB_Handler( log )
     result_dict = db.update_request_status( db_id, status )
-    assert result_dict.keys() == [u'status']
+    assert result_dict.keys() == [ u'status_update_result' ]
     return_dict = {
         u'request_type': u'update_request_status',
         u'db_id': db_id,
+        u'requested_new_status': status,
         u'datetime': unicode( datetime.datetime.now() ),
-        u'result': result_dict[u'status']
+        u'result': result_dict[ u'status_update_result' ]
         }
     return flask.jsonify( return_dict )
 

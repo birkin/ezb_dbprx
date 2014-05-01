@@ -144,14 +144,28 @@ class DB_Handler(object):
 
     def update_request_status( self, db_id, status ):
         """ Updates request table status field.
-            Called by proxy_app.update_request_status()
-            TODO: Stub; make it work. """
-        sql = settings.UPDATE_REQUEST_STATUS_SQL_PATTERN % ( status, db_id )
-        # sql = settings.UPDATE_REQUEST_STATUS_SQL_PATTERN % status
-        self.file_logger.debug( u'in db_handler.update_request_status(); sql, %s' % sql )
-        result = self.execute_sql( sql )
-        self.file_logger.debug( u'in db_handler.update_request_status(); result, %s' % result )
-        return
+            Called by proxy_app.update_request_status() """
+        ## update the status
+        update_sql = settings.UPDATE_REQUEST_STATUS_SQL_PATTERN % ( status, db_id )
+        self.file_logger.debug( u'in db_handler.update_request_status(); update_sql, %s' % update_sql )
+        try:
+            self.execute_sql( update_sql )
+        except Exception as e:
+            self.file_logger.error( u'in db_handler.update_request_status(); problem executing update; exception: %s' % e )
+            return { u'status_update_result': u'status_update_failed_on_exception' }
+        ## confirm the update was successful
+        confirmation_sql = settings.CONFIRM_REQUEST_STATUS_SQL_PATTERN % db_id
+        self.file_logger.debug( u'in db_handler.update_request_status(); confirmation_sql, %s' % confirmation_sql )
+        try:
+            result_dict_list = self.execute_sql( confirmation_sql )
+            self.file_logger.debug( u'in db_handler.update_request_status; result_dict_list, %s' % result_dict_list )
+            if result_dict_list[0][u'request_status'] == status:
+                return { u'status_update_result': u'status_updated' }
+            else:
+                return { u'status_update_result': u'status_confirmation_failed' }
+        except Exception as e:
+            self.file_logger.error( u'in db_handler.update_request_status(); problem executing confirmation; exception: %s' % e )
+            return { u'status_update_result': u'status_confirmation_failed_on_exception' }
 
     def update_history_note( self, request_id, note ):
         """ Updates history table note field.
