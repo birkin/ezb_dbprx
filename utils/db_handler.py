@@ -113,11 +113,24 @@ class DB_Handler(object):
         self.file_logger.debug( u'in db_handler.search_new_request; sql, %s' % sql )
         raw_dict_list = self.execute_sql( sql )
         self.file_logger.debug( u'in db_handler.search_new_request; raw_dict_list, %s' % raw_dict_list )
-        if len( raw_dict_list ) > 0:
-            massaged_dict = self._massage_raw_data( raw_dict_list )
-            return massaged_dict
-        else:
-            return {}
+        return_val = {}
+        if raw_dict_list:
+            if len( raw_dict_list ) > 0:
+                return_val = self._massage_raw_data( raw_dict_list )
+        return return_val
+
+    # def search_new_request( self ):
+    #     """ Returns json string of found request dict on find, 'result': 'not_found' on no-find.
+    #         Called by: proxy_app.search_new_request() """
+    #     sql = settings.SEARCH_SQL
+    #     self.file_logger.debug( u'in db_handler.search_new_request; sql, %s' % sql )
+    #     raw_dict_list = self.execute_sql( sql )
+    #     self.file_logger.debug( u'in db_handler.search_new_request; raw_dict_list, %s' % raw_dict_list )
+    #     if len( raw_dict_list ) > 0:
+    #         massaged_dict = self._massage_raw_data( raw_dict_list )
+    #         return massaged_dict
+    #     else:
+    #         return {}
 
     def _massage_raw_data( self, raw_dict_list ):
         """ Takes raw json list of a single dict representing db result;
