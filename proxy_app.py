@@ -19,20 +19,20 @@ basic_auth = BasicAuth(app)
 ## experimentation ##
 
 
-@app.route( '/hello1', methods=['GET'] )
+@app.route( '/hello1/', methods=['GET'] )
 def hi_a():
     """ Tests simple json response return. """
     return flask.jsonify( {'hello': 'world'} )
 
 
-@app.route( '/hello2', methods=['GET'] )
+@app.route( '/hello2/', methods=['GET'] )
 def hi_b():
     """ Tests logging. """
     log.info( u'hi there' )
     return flask.jsonify( {'hello': 'world2'} )
 
 
-@app.route( '/basic_auth', methods=['GET'] )
+@app.route( '/basic_auth/', methods=['GET'] )
 @basic_auth.required
 def try_basic_auth():
     """ Tests basic-auth. """
@@ -40,14 +40,14 @@ def try_basic_auth():
     return flask.jsonify( {'got': 'through'} )
 
 
-@app.route( '/forbidden', methods=['GET'] )
+@app.route( '/forbidden/', methods=['GET'] )
 def try_forbidden():
     """ Tests forbidden response. """
     log.debug( u'in proxy_app.try_forbidden()' )
     return flask.abort( 403 )
 
 
-@app.route( '/post_test', methods=['POST'] )
+@app.route( '/post_test/', methods=['POST'] )
 def handle_post():
     """ Tests perceiving params response return. """
     value_a = flask.request.form['key_a'].strip()
@@ -57,7 +57,7 @@ def handle_post():
 ## real work ##
 
 
-@app.route( u'/my_ip', methods=['GET'] )
+@app.route( u'/my_ip/', methods=['GET'] )
 def show_ip():
     """ Returns ip.
         Note: this was a test, but could be useful for debugging. """
@@ -66,7 +66,7 @@ def show_ip():
     return flask.jsonify( {u'client_ip': ip} )
 
 
-@app.route( u'/search_new_request', methods=['GET'] )
+@app.route( u'/search_new_request/', methods=['GET'] )
 @basic_auth.required
 def search():
     """ Searches for new requests. """
@@ -75,15 +75,15 @@ def search():
         log.debug( u'- in proxy_app.search_new_request(); client_ip `%s` not in LEGIT_IPS; returning forbidden' % client_ip )
         return flask.abort( 403 )
     db = db_handler.DB_Handler( log )
-    result_dict = db.search_new_request()
+    result_list = db.search_new_request()
     return_dict = {
         u'request_type': u'search_new_request',
         u'datetime': unicode( datetime.datetime.now() ),
-        u'result': result_dict }
+        u'result': result_list }
     return flask.jsonify( return_dict )
 
 
-@app.route( u'/update_request_status', methods=['POST'] )
+@app.route( u'/update_request_status/', methods=['POST'] )
 @basic_auth.required
 def update_request_status():
     """ Updates db request status. """

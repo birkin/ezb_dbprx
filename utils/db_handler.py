@@ -107,13 +107,13 @@ class DB_Handler(object):
     ## search_new_request() ##
 
     def search_new_request( self ):
-        """ Returns json string of found request dict on find, 'result': 'not_found' on no-find.
+        """ Returns json string of list of dicts on find, empty-list on no-find.
             Called by: proxy_app.search_new_request() """
         sql = settings.SEARCH_SQL
         self.file_logger.debug( u'in db_handler.search_new_request; sql, %s' % sql )
         raw_dict_list = self.execute_sql( sql )
         self.file_logger.debug( u'in db_handler.search_new_request; raw_dict_list, %s' % raw_dict_list )
-        return_val = {}
+        return_val = []
         if raw_dict_list:
             if len( raw_dict_list ) > 0:
                 return_val = self._massage_raw_data( raw_dict_list )
@@ -126,34 +126,40 @@ class DB_Handler(object):
     #     self.file_logger.debug( u'in db_handler.search_new_request; sql, %s' % sql )
     #     raw_dict_list = self.execute_sql( sql )
     #     self.file_logger.debug( u'in db_handler.search_new_request; raw_dict_list, %s' % raw_dict_list )
-    #     if len( raw_dict_list ) > 0:
-    #         massaged_dict = self._massage_raw_data( raw_dict_list )
-    #         return massaged_dict
-    #     else:
-    #         return {}
+    #     return_val = {}
+    #     if raw_dict_list:
+    #         if len( raw_dict_list ) > 0:
+    #             return_val = self._massage_raw_data( raw_dict_list )
+    #     return return_val
 
     def _massage_raw_data( self, raw_dict_list ):
-        """ Takes raw json list of a single dict representing db result;
-                makes keys more generic;
-                returns the generic dict (not a list).
+        """ Makes keys more generic.
+            Returns list of updated dicts
             Called by search_new_request() .
             Possible TODO: add None to self.key_mapper if item isn't needed; test for that here and don't return it. """
-        raw_dict = raw_dict_list[0]
-        massaged_dict = {}
-        for (key, value) in raw_dict.items():
-            new_key = self.key_mapper[key]
-            massaged_dict[new_key] = value
-        return massaged_dict
+        updated_list = []
+        for entry in raw_dict_list:
+            massaged_dict = {}
+            for (key, value) in raw_dict.items():
+                new_key = self.key_mapper[key]
+                massaged_dict[new_key] = value
+            updated_list.append( massaged_dict )
+        return updated_list
+
+    # def _massage_raw_data( self, raw_dict_list ):
+    #     """ Takes raw json list of a single dict representing db result;
+    #             makes keys more generic;
+    #             returns the generic dict (not a list).
+    #         Called by search_new_request() .
+    #         Possible TODO: add None to self.key_mapper if item isn't needed; test for that here and don't return it. """
+    #     raw_dict = raw_dict_list[0]
+    #     massaged_dict = {}
+    #     for (key, value) in raw_dict.items():
+    #         new_key = self.key_mapper[key]
+    #         massaged_dict[new_key] = value
+    #     return massaged_dict
 
     ## other ##
-
-    # def jsonify_db_data( self, data_dict ):
-    #     """ Returns json string for given tuple of row-dict entries.
-    #         Allows result to be logged easily.
-    #         Called by ezb_controller.py """
-    #     data_dict[u'created'] = unicode( data_dict[u'created'] )
-    #     jstring = json.dumps( data_dict, sort_keys=True, indent=2 )
-    #     return jstring
 
     def update_request_status( self, db_id, status ):
         """ Updates request table status field.
