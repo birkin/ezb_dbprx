@@ -140,7 +140,7 @@ class DB_Handler(object):
         updated_list = []
         for entry in raw_dict_list:
             massaged_dict = {}
-            for (key, value) in raw_dict_list.items():
+            for (key, value) in entry.items():
                 new_key = self.key_mapper[key]
                 massaged_dict[new_key] = value
             updated_list.append( massaged_dict )
