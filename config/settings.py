@@ -14,6 +14,8 @@ DB_NAME = unicode( os.environ.get( u'ezb_dbprx__DB_NAME') )
 SEARCH_SQL = unicode( os.environ.get( u'ezb_dbprx__SEARCH_SQL') )  # for db_handler.DB_Handler.search_new_request()
 UPDATE_REQUEST_STATUS_SQL_PATTERN = unicode( os.environ.get( u'ezb_dbprx__UPDATE_REQUEST_STATUS_SQL_PATTERN') )  # for db_handler.DB_Handler.update_request_status()
 CONFIRM_REQUEST_STATUS_SQL_PATTERN = unicode( os.environ.get( u'ezb_dbprx__CONFIRM_REQUEST_STATUS_SQL_PATTERN') )  # for db_handler.DB_Handler.update_request_status()
+CREATE_HISTORY_ENTRY_PATTERN = unicode( os.environ.get( u'ezb_dbprx__CREATE_HISTORY_ENTRY_SQL_PATTERN') )  # for db_handler.DB_Handler.add_history_entry()
+
 
 ## file-logger
 LOG_DIR = unicode( os.environ.get(u'ezb_dbprx__LOG_DIR') )

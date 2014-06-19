@@ -125,14 +125,17 @@ def add_history_note():
     if not flask.request.remote_addr in settings.LEGIT_IPS.keys():
         log.debug( u'- in proxy_app.add_history_note(); returning forbidden for ip, `%s`' % flask.request.remote_addr )
         return flask.abort( 403 )
-    ( db_id, history_note ) = ( flask.request.form[u'db_id'], flask.request.form[u'history_note'] )  # flask will return a '400 - Bad Request' if getting a value fails
-    db = db_handler.DB_Handler( log )
-    result_dict = db.update_history_note( db_id, history_note )
-    return flask.abort( 403, u'Forbidden - under construction' )
+    ( db_id, db_h ) = ( flask.request.form[u'db_id'], db_handler.DB_Handler(log) )  # flask will return a '400 - Bad Request' if getting a value fails
+    result dbh.add_history_note( db_id )
+    return_dict = {
+        u'request_type': u'add_history_note', u'db_id': db_id,
+        u'datetime': unicode( datetime.datetime.now() ), u'result': result }
+    return flask.jsonify( return_dict )
 
 
-if __name__ == '__main__':
-    if os.getenv('DEVBOX') == 'true':
-        app.run( host='0.0.0.0', debug=True )
-    else:
-        app.run()
+
+# if __name__ == '__main__':
+#     if os.getenv('DEVBOX') == 'true':
+#         app.run( host='0.0.0.0', debug=True )
+#     else:
+#         app.run()

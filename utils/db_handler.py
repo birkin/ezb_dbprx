@@ -133,7 +133,7 @@ class DB_Handler(object):
             updated_list.append( massaged_dict )
         return updated_list
 
-    ## other ##
+    ## update_request_status ##
 
     def update_request_status( self, db_id, status ):
         """ Updates request table status field.
@@ -160,13 +160,15 @@ class DB_Handler(object):
             self.file_logger.error( u'in db_handler.update_request_status(); problem executing confirmation; exception: %s' % e )
             return { u'status_update_result': u'status_confirmation_failed_on_exception' }
 
-    def update_history_note( self, request_id, note ):
-        """ Updates history table note field.
-            Called by ezb_controller.py
-            TODO: Stub; make it work. """
-        sql = u"INSERT INTO `aaa` ( field_a, field_b ) VALUES ( '%s', '%s' )" % ( request_id, note )
+    ## add history note ##
+
+    def add_history_entry( self, request_id ):
+        """ Creates history table record.
+            Called by proxy_app.add_history_note() """
+        add_history_sql = settings.CREATE_HISTORY_ENTRY_PATTERN % request_id
+        self.file_logger.debug( u'in db_handler.add_history_entry(); add_history_sql, %s' % add_history_sql )
         result = self.execute_sql( sql )
-        self.file_logger.debug( u'- in dev_ezb_controller.py; uc.DB_Handler.update_history_note(); note updated' )
+        self.file_logger.debug( u'in db_handler.add_history_entry(); result, `%s`' % result )
         return
 
   # end class DB_Handler()
